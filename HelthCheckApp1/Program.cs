@@ -30,6 +30,8 @@ builder.Services
         // Set configuration property programatically. Also them can be specified in the appsettings.json
         c.AddHealthCheckEndpoint("HTTP Api 1", "https://localhost:7014/healthz");
 
+        // Sample endpoint to demo the use of "Predicate"
+        c.AddHealthCheckEndpoint("No SQL", "/nosql");
         //
         // Set configuration property programatically. Also them can be specified in the appsettings.json
         //
@@ -54,8 +56,15 @@ app
     .UseHealthChecks("/healthz", new HealthCheckOptions
     {
         Predicate = _ => true,
-        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
     })
+    // Sample endpoint to demo the use of "Predicate"
+    .UseHealthChecks("/nosql", new HealthCheckOptions
+    {
+        Predicate = p => p.Tags.Contains("nosql"),
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse,
+    })
+
     // Use of Prometheus
     // .UseHealthChecksPrometheusExporter("/metrics")
     .UseRouting()
